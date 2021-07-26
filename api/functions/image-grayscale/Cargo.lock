@@ -163,7 +163,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "wasi_vercel_example"
+name = "tencent_scf_wasm_runtime"
 version = "0.1.0"
 dependencies = [
  "hex",

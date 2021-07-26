@@ -16,6 +16,12 @@ app.get('/hello', (req, res) => {
   res.send('Hello Serverless Cloud Function , Web Function\n');
 });
 
+app.options('/func', (req, res) => {
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.end();
+});
+
 app.post('/func', (req, res) => {
   const wasmedge = spawn(path.join(__dirname, 'wasmedge'), [path.join(__dirname, 'grayscale.so')]);
 
@@ -28,6 +34,8 @@ app.post('/func', (req, res) => {
     let buf = Buffer.concat(d);
 
     res.setHeader('Content-Type', req.headers['image-type']);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
     res.send(buf);
   });
 
