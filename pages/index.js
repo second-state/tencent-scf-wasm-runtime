@@ -12,7 +12,7 @@ export default function Home() {
     <div className={styles.container}>
       <Head>
         <title>Tencent SCF Wasm Runtime</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/tencent-scf-wasm-runtime/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
