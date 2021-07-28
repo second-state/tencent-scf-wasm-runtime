@@ -23,7 +23,11 @@ app.options('/func', (req, res) => {
 });
 
 app.post('/func', (req, res) => {
-  const wasmedge = spawn(path.join(__dirname, 'wasmedge'), [path.join(__dirname, 'grayscale.so')]);
+  const wasmedge = spawn(
+    path.join(__dirname, 'wasmedge-tensorflow-lite'),
+    [path.join(__dirname, 'classify.so')],
+    {env: {'LD_LIBRARY_PATH': __dirname}}
+  );
 
   let d = [];
   wasmedge.stdout.on('data', (data) => {
@@ -31,12 +35,9 @@ app.post('/func', (req, res) => {
   });
 
   wasmedge.on('close', (code) => {
-    let buf = Buffer.concat(d);
-
-    res.setHeader('Content-Type', req.headers['image-type']);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', '*');
-    res.send(buf);
+    res.send(d.join(''));
   });
 
   wasmedge.stdin.write(req.body);
