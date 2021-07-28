@@ -1,4 +1,4 @@
-## [图像处理 Demo](https://second-state.github.io/tencent-scf-wasm-runtime/) | Tensorflow 推理 Demo
+## [图像处理 Demo](https://second-state.github.io/tencent-scf-wasm-runtime/) | [Tensorflow 推理 Demo](https://juntao.github.io/tencent-scf-wasm-runtime/)
 
 这个 repo 是一个可以 fork 的模版，让你可以很简单地在腾讯云 Serverless 上部署基于 WasmEdge 的 WebAssembly 函数。这么做有几个优点。
 
@@ -7,7 +7,7 @@
 * WebAssembly 比本机编译的函数更安全，因为它提供了一个运行时沙箱。 可以隔离并且包容函数中的错误。
 * WasmEdge 为 Rust 开发者提供了最友好的 API 来高效安全地执行 Tensorflow 模型。
 
-让我们看看如何在腾讯云 Serverless 平台上使用自定义 Docker 镜像来运行高性能的 WasmEdge 函数。 此示例展示了一个使用 serverless 函数的 Web 应用程序，可将上传的图像转换为灰色。在 tensorflow 分支里我们有一个 AI 推理函数的例子。
+让我们看看如何在腾讯云 Serverless 平台上使用自定义 Docker 镜像来运行高性能的 WasmEdge 函数。 此示例展示了一个使用 serverless 函数的 Web 应用程序，可将上传的图像转换为灰色。在 [tensorflow](https://github.com/second-state/tencent-scf-wasm-runtime/tree/tensorflow) 分支里我们有一个 AI 推理函数的例子。
 
 ![](tencent-scf-wasmedge-runtime.gif)
 
