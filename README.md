@@ -7,7 +7,7 @@
 * WebAssembly 比本机编译的函数更安全，因为它提供了一个运行时沙箱。 可以隔离并且包容函数中的错误。
 * WasmEdge 为 Rust 开发者提供了最友好的 API 来高效安全地执行 Tensorflow 模型。
 
-让我们看看如何在腾讯云 Serverless 平台上使用自定义 Docker 镜像来运行高性能的 WasmEdge 函数。 此示例展示了一个使用 serverless 函数的 Web 应用程序，可将上传的图像转换为灰色。在 tensorflow 分支里我们有一个 AI 推理函数的例子。
+让我们看看如何在腾讯云 Serverless 平台上使用自定义 Docker 镜像来运行高性能的 WasmEdge 函数。 此示例展示了一个使用 serverless 函数的 Web 应用程序，可用 tensorflow 模型识别上传的图像中的物体。在 main 分支里我们有一个图像处理（转黑白）函数的例子。
 
 ![](tencent-scf-wasmedge-runtime.gif)
 
@@ -21,38 +21,38 @@
 
 ![](docs/images/create_container_repo.png)
 
-在 `secondstate` 这个命名空间，新建一个镜像。我把它命名为 `grayscale`，因为我们这个示例函数的功能把彩色图片变得黑白。
+在 `secondstate` 这个命名空间，新建一个镜像。我把它命名为 `classify`，因为我们这个示例函数的功能是把图片识别分类。
 
 ![](docs/images/create_container_image.png)
 
 回到你的开发机器上，用 docker login 登录你的镜像仓库。用你的刚刚创建的镜像链接就好。
 
 ```
-$ docker login hkccr.ccs.tencentyun.com/secondstate/grayscale
+$ docker login hkccr.ccs.tencentyun.com/secondstate/classify
 Username:
 Password:
 ```
 
 ## 建立我们的函数镜像
 
-在这个模板中，我们有一个已经编译好的 WebAssembly 函数放在 [api/grayscale.wasm](api/grayscale.wasm) 文件里。这个函数的 Rust 源代码在 [api/functions/image-grayscale](api/functions/image-grayscale) 里面。它读入一个图片，然后输出这个图的黑白版。其输入与输出都是二进制数组。
+在这个模板中，我们有一个已经编译好的 WebAssembly 函数放在 [api/classify.wasm](api/classify.wasm) 文件里。这个函数的 Rust 源代码在 [api/functions/image-classification](api/functions/image-classification) 里面。它读入一个图片，然后输出 AI 模型识别的这个图中的物体。
 
-而 [api/server.js](api/server.js) 这个脚本从 Web 函数的网关获得 HTTP request 的数据，传给 `grayscale.wasm` 函数执行，再把执行结果返回给 HTTP response。
+而 [api/server.js](api/server.js) 这个脚本从 Web 函数的网关获得 HTTP request 的数据，传给 `classify.wasm` 函数执行，再把执行结果返回给 HTTP response。
 
-我们要把 `grayscale.wasm` 与 `server.js` 以及 WasmEdge 的执行环境一起封装在一个容器镜像里面，才能后续将其部署为 serverless 函数。
+我们要把 `classify.wasm` 与 `server.js` 以及 WasmEdge 的执行环境一起封装在一个容器镜像里面，才能后续将其部署为 serverless 函数。
 
 ```
 $ cd api
-$ docker build -t hkccr.ccs.tencentyun.com/secondstate/grayscale:0.1 ./
+$ docker build -t hkccr.ccs.tencentyun.com/secondstate/classify:0.1 ./
 ... ...
-Successfully tagged hkccr.ccs.tencentyun.com/secondstate/grayscale:0.1
+Successfully tagged hkccr.ccs.tencentyun.com/secondstate/classify:0.1
 ```
 
 然后将这个容器镜像发布在我们刚刚建立的腾讯云容器镜像仓库里。
 
 ```
-$ docker push hkccr.ccs.tencentyun.com/secondstate/grayscale:0.1
-The push refers to repository [hkccr.ccs.tencentyun.com/secondstate/grayscale]
+$ docker push hkccr.ccs.tencentyun.com/secondstate/classify:0.1
+The push refers to repository [hkccr.ccs.tencentyun.com/secondstate/classify]
 ... ...
 0.1: digest: sha256:... size: 3246
 ```
@@ -84,19 +84,19 @@ The push refers to repository [hkccr.ccs.tencentyun.com/secondstate/grayscale]
 
 ## 开发你自己的函数
 
-我们的 WebAssembly serverless 函数是用 Rust 开发的。这个 Rust 项目在 [api/functions](api/functions) 里面。就用 `cargo` 命令就可以编译出 [api/grayscale.wasm](api/grayscale.wasm) 文件。
+我们的 WebAssembly serverless 函数是用 Rust 开发的。这个 Rust 项目在 [api/functions](api/functions) 里面。就用 `cargo` 命令就可以编译出 [api/classify.wasm](api/classify.wasm) 文件。
 
 ```
-$ cd api/functions/image-grayscale/
+$ cd api/functions/image-classification/
 $ cargo build --release --target wasm32-wasi
-$ cp target/wasm32-wasi/release/grayscale.wasm ../../
+$ cp target/wasm32-wasi/release/classify.wasm ../../
 ```
 
-这个 [Rust 函数](api/functions/image-grayscale/src/main.rs) 从 `STDIN` 读入上传的图片，然后把黑白图片从 `STDOUT` 输出。你可以把它改成你需要的业务逻辑。
+这个 [Rust 函数](api/functions/image-classification/src/main.rs) 从 `STDIN` 读入上传的图片，然后把黑白图片从 `STDOUT` 输出。你可以把它改成你需要的业务逻辑。
 
 模板中的 [api/server.js](api/server.js) 将 HTTP request 与 response 与 wasmedge 联接起来。如果你改了 Rust 函数的输入与输出，你可能也要改动 [api/server.js](api/server.js) 里面的胶水代码。
 
-修改了 [Rust 项目](api/functions/image-grayscale/) 与 [api/server.js](api/server.js) 之后，你可以重新创建与部署 Docker 镜像。新的函数就可以用了！
+修改了 [Rust 项目](api/functions/image-classification/) 与 [api/server.js](api/server.js) 之后，你可以重新创建与部署 Docker 镜像。新的函数就可以用了！
 
 ## 下一步
 
