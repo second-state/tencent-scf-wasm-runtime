@@ -78,6 +78,7 @@ The push refers to repository [hkccr.ccs.tencentyun.com/secondstate/grayscale]
 
 这个模板有一个简单的基于 Next.js 的前端 UI。它是一个部署在 GitHub pages 上的静态网页。在 [pages/index.js](pages/index.js) 这个文件里，有一个 `env.NEXT_PUBLIC_FUNCTION_URL` 指向上面的 web 函数公开访问路径。这个 `env.NEXT_PUBLIC_FUNCTION_URL` 是在项目的 Github setting 里面设置的。
 
+**注意**：`NEXT_PUBLIC_FUNCTION_URL` 里面应该填写的是你的*函数*的公开访问路径，需要在上一步的*服务*公开访问路径后添加 `/func`。比如，上一步中的公开访问路径是 `*.apigw.tencentcs.com/release/`，这一步中`NEXT_PUBLIC_FUNCTION_URL` 需要设置为 `*.apigw.tencentcs.com/release/func`
 ![](docs/images/github_pages_env.png)
 
 最后，你可以把这个网页放在任何一个支持静态网站的托管服务上。比如腾讯云的网站托管服务。只要将前端的 `env.NEXT_PUBLIC_FUNCTION_URL` 改成 serverless web 函数的公开访问路径即可。
