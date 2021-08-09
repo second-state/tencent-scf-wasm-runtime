@@ -1,13 +1,17 @@
 ## [图像处理 Demo](https://second-state.github.io/tencent-scf-wasm-runtime/) | [Tensorflow 推理 Demo](https://juntao.github.io/tencent-scf-wasm-runtime/)
 
-这个 repo 是一个可以 fork 的模版，让你可以很简单地在腾讯云 Serverless 上部署基于 WasmEdge 的 WebAssembly 函数。这么做有几个优点。
+这个 repo 是一个可以 fork 的模版，让你可以快速地在腾讯云 Serverless 上部署基于 WasmEdge 的 WebAssembly 函数。这么做有几个优点。
 
 * WebAssembly 函数可以实现接近本机编译的 C/C++ 函数的性能。
 * 与本机编译的函数不同，WebAssembly 是可移植的，允许开发者在自己的机器上测试函数，并部署在任何公共云上。
-* WebAssembly 比本机编译的函数更安全，因为它提供了一个运行时沙箱。 可以隔离并且包容函数中的错误。
+* WebAssembly 比本机编译的函数更安全，因为它提供了一个沙箱。 可以在一个微服务中隔离运行多个函数。
 * WasmEdge 为 Rust 开发者提供了最友好的 API 来高效安全地执行 Tensorflow 模型。
 
-让我们看看如何在腾讯云 Serverless 平台上使用自定义 Docker 镜像来运行高性能的 WasmEdge 函数。 此示例展示了一个使用 serverless 函数的 Web 应用程序，可用 tensorflow 模型识别上传的图像中的物体。在 [main](https://github.com/second-state/tencent-scf-wasm-runtime/tree/main) 分支里我们有一个图像处理（转黑白）函数的例子。
+下面的架构图展现了在腾讯云 Serverless 平台上使用自定义 Docker 镜像来运行高性能的 WasmEdge 函数。 
+
+![](docs/images/serverless-docker-wasmedge.png)
+
+这个模版展示了一个使用 serverless 函数的 Web 应用程序的示例，可用 tensorflow 模型识别上传的图像中的物体。在 [main](https://github.com/second-state/tencent-scf-wasm-runtime/tree/main) 分支里我们有一个图像处理（转黑白）函数的例子。
 
 ![](tencent-scf-wasmedge-runtime.gif)
 
